@@ -6,8 +6,7 @@ import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Pagamento;
 public class PagamentoMapper {
     public static Pagamento paraDomain(PagamentoResponseDto response) {
         return Pagamento.builder()
-                .id(response.getId())
-                .dataCriacao(response.getDate_created())
+                .dataCriacaoPagamento(response.getDate_created())
                 .dataAprovacao(response.getDate_approved())
                 .dataUltimaAlteracao(response.getDate_last_updated())
                 .build();

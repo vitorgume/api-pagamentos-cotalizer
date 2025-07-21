@@ -12,7 +12,6 @@ public class AssinaturaMapper {
                 .dataCriacao(dto.getDataCriacao())
                 .ultimaRenovacao(dto.getUltimaRenovacao())
                 .emailUsuario(dto.getEmailUsuario())
-                .tokenCardId(dto.getTokenCardId())
                 .build();
     }
 

@@ -20,4 +20,7 @@ public class AssinaturaDto {
     private LocalDateTime ultimaRenovacao;
     private String emailUsuario;
     private String tokenCardId;
+    private String idUsuario;
+    private String cardholderName;
+    private IdentificationDto identification;
 }

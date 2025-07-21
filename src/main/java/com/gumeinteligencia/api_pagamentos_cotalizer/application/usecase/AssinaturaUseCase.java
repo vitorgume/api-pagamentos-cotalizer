@@ -4,6 +4,7 @@ import com.gumeinteligencia.api_pagamentos_cotalizer.application.exceptions.Assi
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.AssinaturaGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Pagamento;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,24 @@ public class AssinaturaUseCase {
 
     private final AssinaturaGateway gateway;
     private final PagamentoUseCase pagamentoUseCase;
+    private final UsuarioUseCase usuarioUseCase;
+    private final MercadoPagoUseCase mercadoPagoUseCase;
 
-    @Value("${cotalizer.valor.assinatura}")
-    private final BigDecimal VALOR_ASSINATURA;
+    private final BigDecimal VALOR_ASSINATURA = BigDecimal.valueOf(39.90);
 
-    public Assinatura criar(Assinatura assinatura) {
-        Pagamento pagamento = pagamentoUseCase.criar(assinatura.getTokenCardId(), assinatura.getEmailUsuario(), VALOR_ASSINATURA);
+    public Assinatura criar(Assinatura assinatura, String tokenCardId) {
+        Usuario usuario = usuarioUseCase.consultarPorId(assinatura.getIdUsuario());
+
+        String customerId = mercadoPagoUseCase.criarCustomer(assinatura.getEmailUsuario(), assinatura.getCardholderName(), assinatura.getIdentification().getType(), assinatura.getIdentification().getNumber());
+
+        String cardId = mercadoPagoUseCase.salvarCartao(customerId, tokenCardId);
+
+        usuario.setCustomerId(customerId);
+        usuario.setTokenCardId(cardId);
+
+        usuarioUseCase.salvar(usuario);
+
+        Pagamento pagamento = pagamentoUseCase.criar(assinatura.getEmailUsuario(), VALOR_ASSINATURA, cardId);
         assinatura.setDadosPagamento(pagamento);
         assinatura.setDataCriacao(LocalDateTime.now());
         assinatura.setUltimaRenovacao(LocalDateTime.now());
@@ -35,7 +48,7 @@ public class AssinaturaUseCase {
         return assinaturaSalva;
     }
 
-    public void deletar(UUID idAssinatura) {
+    public void cancelar(UUID idAssinatura) {
         this.consultarPorId(idAssinatura);
         gateway.deletar(idAssinatura);
     }

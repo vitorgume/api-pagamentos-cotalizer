@@ -32,6 +32,6 @@ public class AssinaturaEntity {
     @Column(name = "email_usuario")
     private String emailUsuario;
 
-    @Column(name = "dados_pagamento")
+    @Embedded
     private Pagamento dadosPagamento;
 }

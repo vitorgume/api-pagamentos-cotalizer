@@ -17,6 +17,8 @@ public class Assinatura {
     private LocalDateTime dataCriacao;
     private LocalDateTime ultimaRenovacao;
     private String emailUsuario;
-    private String tokenCardId;
     private Pagamento dadosPagamento;
+    private String cardholderName;
+    private String idUsuario;
+    private Identification identification;
 }

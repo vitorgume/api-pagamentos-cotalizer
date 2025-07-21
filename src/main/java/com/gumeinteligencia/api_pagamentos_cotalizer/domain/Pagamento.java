@@ -1,5 +1,6 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.domain;
 
+import jakarta.persistence.Embeddable;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -9,9 +10,9 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Builder
+@Embeddable
 public class Pagamento {
-    private Long id;
-    private LocalDate dataCriacao;
+    private LocalDate dataCriacaoPagamento;
     private LocalDate dataAprovacao;
     private LocalDate dataUltimaAlteracao;
 }

@@ -5,6 +5,7 @@ import com.gumeinteligencia.api_pagamentos_cotalizer.application.mapper.Pagament
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PagamentoRequestDto;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PagamentoResponseDto;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Pagamento;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,12 @@ public class PagamentoUseCase {
 
     private final PagamentoGateway gateway;
 
-    public Pagamento criar(String tokenCardId, String emailUsuario, BigDecimal valorAssinatura) {
+    public Pagamento criar(String emailUsuario, BigDecimal valorAssinatura, String cardId) {
         PagamentoRequestDto pagamentoRequestDto = PagamentoRequestDto.builder()
                 .description("Plano Plus - Cotalizer")
                 .installments(1)
                 .payer(new PagamentoRequestDto.Payer(emailUsuario))
-                .token(tokenCardId)
+                .token(cardId)
                 .transaction_amount(valorAssinatura)
                 .build();
 
