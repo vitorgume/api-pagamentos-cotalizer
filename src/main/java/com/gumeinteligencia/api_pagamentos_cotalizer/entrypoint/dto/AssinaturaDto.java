@@ -14,13 +14,7 @@ import java.util.UUID;
 @Setter
 @Builder
 public class AssinaturaDto {
-    private UUID id;
-    private BigDecimal valor;
-    private LocalDateTime dataCriacao;
-    private LocalDateTime ultimaRenovacao;
-    private String emailUsuario;
-    private String tokenCardId;
+    private String paymentMethodId;
+    private String customerEmail;
     private String idUsuario;
-    private String cardholderName;
-    private IdentificationDto identification;
 }

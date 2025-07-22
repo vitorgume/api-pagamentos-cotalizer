@@ -14,7 +14,6 @@ public class UsuarioMapper {
                 .cpf(domain.getCpf())
                 .cnpj(domain.getCnpj())
                 .senha(domain.getSenha())
-                .tokenCardId(domain.getTokenCardId())
                 .customerId(domain.getCustomerId())
                 .build();
     }
@@ -28,7 +27,6 @@ public class UsuarioMapper {
                 .cpf(entity.getCpf())
                 .cnpj(entity.getCnpj())
                 .senha(entity.getSenha())
-                .tokenCardId(entity.getTokenCardId())
                 .customerId(entity.getCustomerId())
                 .build();
     }

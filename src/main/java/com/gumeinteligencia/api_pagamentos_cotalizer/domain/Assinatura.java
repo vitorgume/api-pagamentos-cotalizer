@@ -12,13 +12,7 @@ import java.util.UUID;
 @Builder
 @ToString
 public class Assinatura {
-    private UUID id;
-    private BigDecimal valor;
-    private LocalDateTime dataCriacao;
-    private LocalDateTime ultimaRenovacao;
-    private String emailUsuario;
-    private Pagamento dadosPagamento;
-    private String cardholderName;
+    private String paymentMethodId;
+    private String customerEmail;
     private String idUsuario;
-    private Identification identification;
 }

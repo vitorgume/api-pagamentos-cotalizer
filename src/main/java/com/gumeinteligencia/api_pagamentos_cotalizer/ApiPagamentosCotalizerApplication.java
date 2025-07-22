@@ -11,7 +11,8 @@ public class ApiPagamentosCotalizerApplication {
 
 		Dotenv dotenv = Dotenv.load();
 
-		System.setProperty("MERCADO_PAGO_ACESS_TOKEN", dotenv.get("MERCADO_PAGO_ACESS_TOKEN"));
+		System.setProperty("STRIPE_ACESS_TOKEN", dotenv.get("STRIPE_ACESS_TOKEN"));
+		System.setProperty("STRIPE_ASSINAUTRA_ID", dotenv.get("STRIPE_ASSINAUTRA_ID"));
 
 		SpringApplication.run(ApiPagamentosCotalizerApplication.class, args);
 	}

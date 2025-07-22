@@ -20,15 +20,8 @@ public class AssinaturaController {
 
     @PostMapping
     public ResponseEntity<ResponseDto<AssinaturaDto>> criar(@RequestBody AssinaturaDto novaAssinatura) {
-        AssinaturaDto resultado = AssinaturaMapper.paraDto(assinaturaUseCase.criar(AssinaturaMapper.paraDomain(novaAssinatura), novaAssinatura.getTokenCardId()));
-        ResponseDto<AssinaturaDto> response = new ResponseDto<>(resultado);
-        return ResponseEntity.created(
-                        UriComponentsBuilder
-                                .newInstance()
-                                .path("/assinaturas/{id}")
-                                .buildAndExpand(resultado.getId())
-                                .toUri())
-                .body(response);
+        assinaturaUseCase.criar(AssinaturaMapper.paraDomain(novaAssinatura));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

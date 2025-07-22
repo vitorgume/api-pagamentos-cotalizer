@@ -2,17 +2,12 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase;
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.exceptions.AssinaturaNaoEncontradaException;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.AssinaturaGateway;
-import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.AssinaturaResponseDto;
-import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PlanoResponseDto;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
-import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Pagamento;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,19 +16,20 @@ import java.util.UUID;
 public class AssinaturaUseCase {
 
     private final AssinaturaGateway gateway;
-    private final PagamentoUseCase pagamentoUseCase;
     private final UsuarioUseCase usuarioUseCase;
-    private final MercadoPagoUseCase mercadoPagoUseCase;
 
-    private final BigDecimal VALOR_ASSINATURA = BigDecimal.valueOf(1);
+    public void criar(Assinatura assinatura) {
 
-    public Assinatura criar(Assinatura assinatura, String tokenCardId) {
-        PlanoResponseDto plano = mercadoPagoUseCase.criarPlano();
-        AssinaturaResponseDto assinaturaSalva = mercadoPagoUseCase.criarAssinatura(plano.getId(), tokenCardId, assinatura.getEmailUsuario());
+        Usuario usuario = usuarioUseCase.consultarPorId(assinatura.getIdUsuario());
 
-        Assinatura novaAssinatura = gateway.salvar(assinatura);
+        if(usuario.getCustomerId() == null) {
+            String idCustom = gateway.criarCustom(assinatura);
+            usuario.setCustomerId(idCustom);
+            usuarioUseCase.salvar(usuario);
+        }
 
-        return novaAssinatura;
+
+        gateway.criarAssinatura(usuario.getCustomerId());
     }
 
     public void cancelar(UUID idAssinatura) {

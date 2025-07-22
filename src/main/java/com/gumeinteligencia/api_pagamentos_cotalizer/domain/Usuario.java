@@ -15,6 +15,5 @@ public class Usuario {
     private String cpf;
     private String cnpj;
     private String senha;
-    private String tokenCardId;
     private String customerId;
 }

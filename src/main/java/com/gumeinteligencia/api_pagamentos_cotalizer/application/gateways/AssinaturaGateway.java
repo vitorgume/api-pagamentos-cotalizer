@@ -11,4 +11,8 @@ public interface AssinaturaGateway {
     void deletar(UUID idAssinatura);
 
     Optional<Assinatura> consultarPorId(UUID idAssinatura);
+
+    String criarCustom(Assinatura assinatura);
+
+    void criarAssinatura(String customId);
 }
