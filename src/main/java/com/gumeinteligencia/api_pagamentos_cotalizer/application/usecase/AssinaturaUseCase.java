@@ -2,6 +2,8 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase;
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.exceptions.AssinaturaNaoEncontradaException;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.AssinaturaGateway;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.AssinaturaResponseDto;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PlanoResponseDto;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Pagamento;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
@@ -23,29 +25,15 @@ public class AssinaturaUseCase {
     private final UsuarioUseCase usuarioUseCase;
     private final MercadoPagoUseCase mercadoPagoUseCase;
 
-    private final BigDecimal VALOR_ASSINATURA = BigDecimal.valueOf(39.90);
+    private final BigDecimal VALOR_ASSINATURA = BigDecimal.valueOf(1);
 
     public Assinatura criar(Assinatura assinatura, String tokenCardId) {
-        Usuario usuario = usuarioUseCase.consultarPorId(assinatura.getIdUsuario());
+        PlanoResponseDto plano = mercadoPagoUseCase.criarPlano();
+        AssinaturaResponseDto assinaturaSalva = mercadoPagoUseCase.criarAssinatura(plano.getId(), tokenCardId, assinatura.getEmailUsuario());
 
-        String customerId = mercadoPagoUseCase.criarCustomer(assinatura.getEmailUsuario(), assinatura.getCardholderName(), assinatura.getIdentification().getType(), assinatura.getIdentification().getNumber());
+        Assinatura novaAssinatura = gateway.salvar(assinatura);
 
-        String cardId = mercadoPagoUseCase.salvarCartao(customerId, tokenCardId);
-
-        usuario.setCustomerId(customerId);
-        usuario.setTokenCardId(cardId);
-
-        usuarioUseCase.salvar(usuario);
-
-        Pagamento pagamento = pagamentoUseCase.criar(assinatura.getEmailUsuario(), VALOR_ASSINATURA, cardId);
-        assinatura.setDadosPagamento(pagamento);
-        assinatura.setDataCriacao(LocalDateTime.now());
-        assinatura.setUltimaRenovacao(LocalDateTime.now());
-        assinatura.setValor(VALOR_ASSINATURA);
-
-        Assinatura assinaturaSalva = gateway.salvar(assinatura);
-
-        return assinaturaSalva;
+        return novaAssinatura;
     }
 
     public void cancelar(UUID idAssinatura) {

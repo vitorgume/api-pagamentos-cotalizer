@@ -16,7 +16,7 @@ public class PagamentoRequestDto {
     private String description;
     private Integer installments;
     private Payer payer;
-    private String token;
+    private String card_id;
     private BigDecimal transaction_amount;
 
     @AllArgsConstructor
@@ -25,5 +25,15 @@ public class PagamentoRequestDto {
     @Builder
     public static class Payer {
         private String email;
+        private Identification identification;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @Builder
+    public static class Identification {
+        private String type;
+        private String number;
     }
 }

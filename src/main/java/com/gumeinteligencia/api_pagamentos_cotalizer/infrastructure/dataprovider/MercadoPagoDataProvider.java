@@ -1,14 +1,15 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.dataprovider;
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.MercadoPagoGateway;
-import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.CustomRequestDto;
-import lombok.RequiredArgsConstructor;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.AssinaturaRequestDto;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.AssinaturaResponseDto;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PlanoRequestDto;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PlanoResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.Map;
+import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
@@ -27,30 +28,37 @@ public class MercadoPagoDataProvider implements MercadoPagoGateway {
         this.ACESS_TOKEN = ACESS_TOKEN;
     }
 
-    @Override
-    public String criarCustomer(CustomRequestDto body) {
-        Map criado = webClient.post()
-                .uri("https://api.mercadopago.com/v1/payments")
-                .header("Authorization", "Bearer " + ACESS_TOKEN)
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
 
-        return criado.get("id").toString();
+    @Override
+    public PlanoResponseDto criarPlano(PlanoRequestDto planoRequestDto) {
+        return webClient.post()
+                .uri("https://api.mercadopago.com/preapproval_plan")
+                .header("Authorization", "Bearer " + ACESS_TOKEN)
+                .bodyValue(planoRequestDto)
+                .retrieve()
+                .onStatus(status -> status.isError(), response ->
+                        response.bodyToMono(String.class).flatMap(body -> {
+                            log.error("Erro HTTP Mercado Pago: {}", body);
+                            return Mono.error(new RuntimeException("Erro HTTP: " + body));
+                        })
+                )
+                .bodyToMono(PlanoResponseDto.class)
+                .block();
     }
 
     @Override
-    public String salvarCartao(String customerId, String tokenCardId) {
-        Map<String, Object> body = Map.of("token", tokenCardId);
-
-        Map resposta = webClient.post()
-                .uri("/v1/customers/{customerId}/cards", customerId)
-                .bodyValue(body)
+    public AssinaturaResponseDto criarAssinatura(AssinaturaRequestDto assinaturaRequestDto) {
+        return webClient.post()
+                .uri("https://api.mercadopago.com/preapproval")
+                .header("Authorization", "Bearer " + ACESS_TOKEN)
+                .bodyValue(assinaturaRequestDto)
                 .retrieve()
-                .bodyToMono(Map.class)
+                .onStatus(status -> status.isError(), response ->
+                        response.bodyToMono(String.class).flatMap(body -> {
+                            log.error("Erro HTTP Mercado Pago: {}", body);
+                            return Mono.error(new RuntimeException("Erro HTTP: " + body));
+                        })
+                ).bodyToMono(AssinaturaResponseDto.class)
                 .block();
-
-        return resposta.get("id").toString();
     }
 }

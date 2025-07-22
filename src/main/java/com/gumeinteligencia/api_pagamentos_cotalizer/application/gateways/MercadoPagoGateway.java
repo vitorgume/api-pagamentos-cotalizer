@@ -1,9 +1,10 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways;
 
-import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.CustomRequestDto;
+import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.*;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
 
 public interface MercadoPagoGateway {
-    String criarCustomer(CustomRequestDto body);
+    PlanoResponseDto criarPlano(PlanoRequestDto planoRequestDto);
 
-    String salvarCartao(String customerId, String tokenCardId);
+    AssinaturaResponseDto criarAssinatura(AssinaturaRequestDto assinaturaRequestDto);
 }

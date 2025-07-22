@@ -3,15 +3,13 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.dataprovide
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.PagamentoGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PagamentoRequestDto;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase.dto.PagamentoResponseDto;
-import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.exceptions.DataProviderException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.util.retry.Retry;
+import reactor.core.publisher.Mono;
 
-import java.time.Duration;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -34,24 +32,20 @@ public class PagamentoDataProvider implements PagamentoGateway {
 
     @Override
     public PagamentoResponseDto enviarPagamento(PagamentoRequestDto pagamentoRequestDto) {
-        return webClient
-                .post()
+        return webClient.post()
                 .uri("https://api.mercadopago.com/v1/payments")
                 .header("Authorization", "Bearer " + ACESS_TOKEN)
+                .header("X-Idempotency-Key", UUID.randomUUID().toString())
                 .bodyValue(pagamentoRequestDto)
                 .retrieve()
-                .bodyToMono(PagamentoResponseDto.class)
-                .retryWhen(
-                        Retry.backoff(3, Duration.ofSeconds(2))
-                                .filter(throwable -> {
-                                    log.warn("Tentando enviar pagamento novamente: {}", throwable.getMessage());
-                                    return true;
-                                })
+                .onStatus(status -> status.isError(), response ->
+                        response.bodyToMono(String.class).flatMap(body -> {
+                            log.error("Erro HTTP Mercado Pago: {}", body);
+                            return Mono.error(new RuntimeException("Erro HTTP: " + body));
+                        })
                 )
-                .doOnError(e -> {
-                    log.error(MENSAGEM_ERRO_ENVIAR_PAGAMENTO, e);
-                    throw new DataProviderException(MENSAGEM_ERRO_ENVIAR_PAGAMENTO, e.getCause());
-                })
+                .bodyToMono(PagamentoResponseDto.class)
                 .block();
+
     }
 }
