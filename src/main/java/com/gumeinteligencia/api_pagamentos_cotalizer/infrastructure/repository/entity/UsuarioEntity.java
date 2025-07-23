@@ -1,5 +1,7 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity;
 
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.PlanoUsuario;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.StatusUsuario;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -20,6 +22,8 @@ public class UsuarioEntity {
     private String cpf;
     private String cnpj;
     private String senha;
-    private String tokenCardId;
-    private String customerId;
+    private StatusUsuario status;
+    private String idCustomer;
+    private PlanoUsuario plano;
+    private String idAssinatura;
 }

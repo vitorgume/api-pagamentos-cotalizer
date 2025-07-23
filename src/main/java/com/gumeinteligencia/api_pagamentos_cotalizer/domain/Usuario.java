@@ -15,5 +15,8 @@ public class Usuario {
     private String cpf;
     private String cnpj;
     private String senha;
-    private String customerId;
+    private StatusUsuario status;
+    private String idCustomer;
+    private PlanoUsuario plano;
+    private String idAssinatura;
 }

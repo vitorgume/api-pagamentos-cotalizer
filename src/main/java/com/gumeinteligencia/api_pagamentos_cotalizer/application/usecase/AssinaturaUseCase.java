@@ -1,47 +1,55 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase;
 
-import com.gumeinteligencia.api_pagamentos_cotalizer.application.exceptions.AssinaturaNaoEncontradaException;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.AssinaturaGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.PlanoUsuario;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AssinaturaUseCase {
 
     private final AssinaturaGateway gateway;
     private final UsuarioUseCase usuarioUseCase;
 
     public void criar(Assinatura assinatura) {
+        log.info("Criando assinatura para o usuario. Assinatura: {}", assinatura);
 
         Usuario usuario = usuarioUseCase.consultarPorId(assinatura.getIdUsuario());
 
-        if(usuario.getCustomerId() == null) {
-            String idCustom = gateway.criarCustom(assinatura);
-            usuario.setCustomerId(idCustom);
-            usuarioUseCase.salvar(usuario);
+        if(usuario.getIdCustomer() == null) {
+            log.info("Criando customer do usuario.");
+
+            String idCustomer = gateway.criarCustom(assinatura);
+            usuario.setIdCustomer(idCustomer);
+
+            log.info("Customer criado com sucesso.");
         }
 
+        String idAssinatura = gateway.criarAssinatura(usuario.getIdCustomer());
 
-        gateway.criarAssinatura(usuario.getCustomerId());
+        usuario.setPlano(PlanoUsuario.PLUS);
+        usuario.setIdAssinatura(idAssinatura);
+        usuarioUseCase.salvar(usuario);
+
+        log.info("Assinatura para o usuario criada com sucesso. Id assinatura: {}", idAssinatura);
     }
 
-    public void cancelar(UUID idAssinatura) {
-        this.consultarPorId(idAssinatura);
-        gateway.deletar(idAssinatura);
-    }
+    public void cancelar(String idUsuario) {
+        log.error("Cancelando assinatura do usuario. Id usuario: {}", idUsuario);
 
-    private void consultarPorId(UUID idAssinatura) {
-        Optional<Assinatura> assinatura = gateway.consultarPorId(idAssinatura);
+        Usuario usuario = usuarioUseCase.consultarPorId(idUsuario);
 
-        if(assinatura.isEmpty()) {
-            throw new AssinaturaNaoEncontradaException();
-        }
+        gateway.cancelar(usuario.getIdAssinatura());
+
+        usuario.setPlano(PlanoUsuario.GRATIS);
+        usuario.setIdAssinatura(null);
+        usuarioUseCase.salvar(usuario);
+
+        log.info("Assinatura cancelada com sucesso.");
     }
 }

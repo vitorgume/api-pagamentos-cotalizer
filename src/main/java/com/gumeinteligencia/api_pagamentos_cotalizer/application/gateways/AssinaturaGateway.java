@@ -6,13 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AssinaturaGateway {
-    Assinatura salvar(Assinatura assinatura);
-
-    void deletar(UUID idAssinatura);
-
-    Optional<Assinatura> consultarPorId(UUID idAssinatura);
-
     String criarCustom(Assinatura assinatura);
 
-    void criarAssinatura(String customId);
+    String criarAssinatura(String customId);
+
+    void cancelar(String idAssinatura);
 }

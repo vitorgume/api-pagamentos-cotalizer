@@ -24,9 +24,9 @@ public class AssinaturaController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelar(@PathVariable UUID idAssinatura) {
-        assinaturaUseCase.cancelar(idAssinatura);
+    @DeleteMapping("/{idUsuario}")
+    public ResponseEntity<Void> cancelar(@PathVariable("idUsuario") String idUsuario) {
+        assinaturaUseCase.cancelar(idUsuario);
         return ResponseEntity.noContent().build();
     }
 }

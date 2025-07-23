@@ -9,9 +9,11 @@ import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.e
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Optional;
@@ -43,57 +45,10 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
         this.ASSINATURA_ID = ASSINATURA_ID;
     }
 
-
-    private final String MENSAGEM_ERRO_SALVAR_ASSINATURA = "Erro ao salvar assinatura.";
-    private final String MENSAGEM_ERRO_DELETAR_ASSINATURA = "Erro ao deletar assinatura.";
-    private final String MENSAGEM_ERRO_CONSULTAR_POR_ID = "Erro ao consultar assinatura pelo seu id.";
-
-
-
-    @Override
-    public Assinatura salvar(Assinatura assinatura) {
-//        AssinaturaEntity assinaturaEntity = AssinaturaMapper.paraEntity(assinatura);
-//
-//        try {
-//            assinaturaEntity = repository.save(assinaturaEntity);
-//        } catch (Exception ex) {
-//            log.error(MENSAGEM_ERRO_SALVAR_ASSINATURA, ex);
-//            throw new DataProviderException(MENSAGEM_ERRO_SALVAR_ASSINATURA, ex.getCause());
-//        }
-//
-//        return AssinaturaMapper.paraDomain(assinaturaEntity);
-        return null;
-    }
-
-    @Override
-    public void deletar(UUID idAssinatura) {
-        try {
-            repository.deleteById(idAssinatura);
-        } catch (Exception ex) {
-            log.error(MENSAGEM_ERRO_DELETAR_ASSINATURA, ex);
-            throw new DataProviderException(MENSAGEM_ERRO_DELETAR_ASSINATURA, ex.getCause());
-        }
-    }
-
-    @Override
-    public Optional<Assinatura> consultarPorId(UUID idAssinatura) {
-//        Optional<AssinaturaEntity> assinaturaEntity;
-//
-//        try {
-//            assinaturaEntity = repository.findById(idAssinatura);
-//        } catch (Exception ex) {
-//            log.error(MENSAGEM_ERRO_CONSULTAR_POR_ID, ex);
-//            throw new DataProviderException(MENSAGEM_ERRO_CONSULTAR_POR_ID, ex.getCause());
-//        }
-//
-//        return assinaturaEntity.map(AssinaturaMapper::paraDomain);
-        return null;
-    }
-
     @Override
     public String criarCustom(Assinatura assinatura) {
         Map response = webClient.post()
-                .uri("https://api.stripe.com/v1/customers")
+                .uri("/v1/customers")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + SECRET_KEY)
                 .bodyValue("email=" + assinatura.getCustomerEmail() + "&payment_method=" + assinatura.getPaymentMethodId() + "&invoice_settings[default_payment_method]=" + assinatura.getPaymentMethodId())
@@ -105,14 +60,38 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
     }
 
     @Override
-    public void criarAssinatura(String customerId) {
-        webClient.post()
-                .uri("https://api.stripe.com/v1/subscriptions")
+    public String criarAssinatura(String customerId) {
+        Map responseRequest = webClient.post()
+                .uri("/v1/subscriptions")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + SECRET_KEY)
                 .bodyValue("customer=" + customerId + "&items[0][price]=" + ASSINATURA_ID)
                 .retrieve()
-                .bodyToMono(JsonNode.class)
+                .onStatus(status -> status.isError(), response ->
+                        response.bodyToMono(String.class).flatMap(body -> {
+                            log.error("Erro HTTP Stripe: {}", body);
+                            return Mono.error(new RuntimeException("Erro HTTP Stripe: " + body));
+                        })
+                )
+                .bodyToMono(Map.class)
+                .block();
+
+        return responseRequest.get("id").toString();
+    }
+
+    @Override
+    public void cancelar(String idAssinatura) {
+        webClient.delete()
+                .uri("/v1/subscriptions/" + idAssinatura)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + SECRET_KEY)
+                .retrieve()
+                .onStatus(status -> status.isError(), response ->
+                        response.bodyToMono(String.class).flatMap(body -> {
+                            log.error("Erro HTTP Stripe: {}", body);
+                            return Mono.error(new RuntimeException("Erro HTTP Stripe: " + body));
+                        })
+                )
+                .bodyToMono(Map.class)
                 .block();
     }
 }

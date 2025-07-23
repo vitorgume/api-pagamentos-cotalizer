@@ -14,7 +14,10 @@ public class UsuarioMapper {
                 .cpf(domain.getCpf())
                 .cnpj(domain.getCnpj())
                 .senha(domain.getSenha())
-                .customerId(domain.getCustomerId())
+                .status(domain.getStatus())
+                .idCustomer(domain.getIdCustomer())
+                .plano(domain.getPlano())
+                .idAssinatura(domain.getIdAssinatura())
                 .build();
     }
 
@@ -27,7 +30,10 @@ public class UsuarioMapper {
                 .cpf(entity.getCpf())
                 .cnpj(entity.getCnpj())
                 .senha(entity.getSenha())
-                .customerId(entity.getCustomerId())
+                .status(entity.getStatus())
+                .idCustomer(entity.getIdCustomer())
+                .plano(entity.getPlano())
+                .idAssinatura(entity.getIdAssinatura())
                 .build();
     }
 }
