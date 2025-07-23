@@ -13,6 +13,7 @@ public class ApiPagamentosCotalizerApplication {
 
 		System.setProperty("STRIPE_ACESS_TOKEN", dotenv.get("STRIPE_ACESS_TOKEN"));
 		System.setProperty("STRIPE_ASSINAUTRA_ID", dotenv.get("STRIPE_ASSINAUTRA_ID"));
+		System.setProperty("SECURITY_API_KEY", dotenv.get("SECURITY_API_KEY"));
 
 		SpringApplication.run(ApiPagamentosCotalizerApplication.class, args);
 	}
