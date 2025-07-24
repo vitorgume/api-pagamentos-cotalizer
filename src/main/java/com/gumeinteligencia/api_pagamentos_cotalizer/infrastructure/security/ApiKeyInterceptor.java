@@ -4,12 +4,14 @@ import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.exceptions.A
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.IOException;
 
 @Component
+@Profile("!test")
 public class ApiKeyInterceptor implements HandlerInterceptor {
 
     @Value("${security.api.key}")
@@ -22,7 +24,7 @@ public class ApiKeyInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String receivedKey = request.getHeader("x-api-key");
 
         if (API_KEY.equals(receivedKey)) {

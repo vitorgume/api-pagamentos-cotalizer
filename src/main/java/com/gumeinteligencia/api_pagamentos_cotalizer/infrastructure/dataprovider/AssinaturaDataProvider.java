@@ -3,7 +3,6 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.dataprovide
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.AssinaturaGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.exceptions.DataProviderException;
-import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.AssinaturaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -18,8 +17,6 @@ import java.util.Map;
 @Slf4j
 public class AssinaturaDataProvider implements AssinaturaGateway {
 
-    private final AssinaturaRepository repository;
-
     private final WebClient webClient;
 
     @Value("${stripe.acess.token}")
@@ -33,12 +30,10 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
     private final String MENSAGEM_ERRO_CANCELAR_ASSINATURA = "Erro ao cancelar assinatura.";
 
     public AssinaturaDataProvider(
-            AssinaturaRepository repository,
             WebClient webClient,
             @Value("${stripe.acess.token}") String SECRET_KEY,
             @Value("${stripe.assinatura.id}") String ASSINATURA_ID
     ) {
-        this.repository = repository;
         this.webClient = webClient;
         this.SECRET_KEY = SECRET_KEY;
         this.ASSINATURA_ID = ASSINATURA_ID;

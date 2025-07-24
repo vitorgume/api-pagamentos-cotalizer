@@ -12,12 +12,4 @@ public class AssinaturaMapper {
                 .idUsuario(dto.getIdUsuario())
                 .build();
     }
-
-    public static AssinaturaDto paraDto(Assinatura domain) {
-        return AssinaturaDto.builder()
-                .paymentMethodId(domain.getPaymentMethodId())
-                .customerEmail(domain.getCustomerEmail())
-                .idUsuario(domain.getIdUsuario())
-                .build();
-    }
 }

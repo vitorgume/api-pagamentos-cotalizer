@@ -1,6 +1,5 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity;
 
-import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Pagamento;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +30,4 @@ public class AssinaturaEntity {
 
     @Column(name = "email_usuario")
     private String emailUsuario;
-
-    @Embedded
-    private Pagamento dadosPagamento;
 }

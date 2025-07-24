@@ -16,7 +16,7 @@ public class AssinaturaUseCase {
     private final AssinaturaGateway gateway;
     private final UsuarioUseCase usuarioUseCase;
 
-    public void criar(Assinatura assinatura) {
+    public String criar(Assinatura assinatura) {
         log.info("Criando assinatura para o usuario. Assinatura: {}", assinatura);
 
         Usuario usuario = usuarioUseCase.consultarPorId(assinatura.getIdUsuario());
@@ -37,6 +37,8 @@ public class AssinaturaUseCase {
         usuarioUseCase.salvar(usuario);
 
         log.info("Assinatura para o usuario criada com sucesso. Id assinatura: {}", idAssinatura);
+
+        return idAssinatura;
     }
 
     public void cancelar(String idUsuario) {

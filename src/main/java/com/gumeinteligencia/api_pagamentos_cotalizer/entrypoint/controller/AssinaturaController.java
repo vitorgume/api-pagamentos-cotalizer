@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -19,9 +20,17 @@ public class AssinaturaController {
     private final AssinaturaUseCase assinaturaUseCase;
 
     @PostMapping
-    public ResponseEntity<ResponseDto<AssinaturaDto>> criar(@RequestBody AssinaturaDto novaAssinatura) {
-        assinaturaUseCase.criar(AssinaturaMapper.paraDomain(novaAssinatura));
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ResponseDto<Map<String, String>>> criar(@RequestBody AssinaturaDto novaAssinatura) {
+        String resultado = assinaturaUseCase.criar(AssinaturaMapper.paraDomain(novaAssinatura));
+        ResponseDto<Map<String, String>> response = new ResponseDto<>(Map.of("id_assinatura", resultado));
+
+        return ResponseEntity.created(
+                        UriComponentsBuilder
+                                .newInstance()
+                                .path("/assinaturas/{id}")
+                                .buildAndExpand(resultado)
+                                .toUri())
+                .body(response);
     }
 
     @DeleteMapping("/{idUsuario}")

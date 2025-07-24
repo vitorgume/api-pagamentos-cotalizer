@@ -7,6 +7,7 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
 public class Usuario {
     private String id;
     private String nome;
