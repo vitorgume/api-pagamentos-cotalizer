@@ -6,7 +6,7 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-@Document(collection = "usuraios")
+@Document(collection = "usuarios")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
