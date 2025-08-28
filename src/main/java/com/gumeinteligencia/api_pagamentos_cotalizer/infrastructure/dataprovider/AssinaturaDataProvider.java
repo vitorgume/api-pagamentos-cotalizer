@@ -19,7 +19,7 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
 
     private final WebClient webClient;
 
-    @Value("${stripe.acess.token}")
+    @Value("${stripe.secret.key}")
     private final String SECRET_KEY;
 
     @Value("${stripe.assinatura.id}")
@@ -31,7 +31,7 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
 
     public AssinaturaDataProvider(
             WebClient webClient,
-            @Value("${stripe.acess.token}") String SECRET_KEY,
+            @Value("${stripe.secret.key}") String SECRET_KEY,
             @Value("${stripe.assinatura.id}") String ASSINATURA_ID
     ) {
         this.webClient = webClient;
