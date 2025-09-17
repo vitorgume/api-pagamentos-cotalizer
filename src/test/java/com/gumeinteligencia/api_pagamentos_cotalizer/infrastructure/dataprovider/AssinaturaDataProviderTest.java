@@ -9,14 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -78,7 +74,7 @@ class AssinaturaDataProviderTest {
     }
 
     @Test
-    public void deveCriarAssinaturaComSucesso() {
+    public void deveCriarAssinaturaPlusComSucesso() {
         String customerId = "cus_abc123";
 
         WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
@@ -95,16 +91,16 @@ class AssinaturaDataProviderTest {
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(Map.class)).thenReturn(Mono.just(Map.of("id", "sub_456")));
 
-        String id = provider.criarAssinatura(customerId);
+        String id = provider.criarAssinaturaPlus(customerId);
 
         assertEquals("sub_456", id);
     }
 
     @Test
-    public void deveLancarExcecaoAoCriarAssinatura() {
+    public void deveLancarExcecaoAoCriarAssinaturaPlus() {
         when(webClient.post()).thenThrow(new RuntimeException("Erro"));
 
-        assertThrows(DataProviderException.class, () -> provider.criarAssinatura("cus_erro"));
+        assertThrows(DataProviderException.class, () -> provider.criarAssinaturaPlus("cus_erro"));
     }
 
     @Test
@@ -134,7 +130,7 @@ class AssinaturaDataProviderTest {
                     throw monoErr.block();
                 });
         DataProviderException ex = assertThrows(DataProviderException.class, () -> {
-            provider.criarAssinatura("qualquer-customer-id");
+            provider.criarAssinaturaPlus("qualquer-customer-id");
         });
 
         assertTrue(ex.getMessage().contains("Erro ao criar uma assinatura."));

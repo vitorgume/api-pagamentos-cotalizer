@@ -44,7 +44,7 @@ class AssinaturaUseCaseTest {
         usuario.setIdCustomer(null);
         when(usuarioUseCase.consultarPorId("user-1")).thenReturn(usuario);
         when(gateway.criarCustom(assinatura)).thenReturn("cust-123");
-        when(gateway.criarAssinatura("cust-123")).thenReturn("sub-456");
+        when(gateway.criarAssinaturaPlus("cust-123")).thenReturn("sub-456");
 
         String idRetornado = useCase.criar(assinatura);
 
@@ -56,7 +56,7 @@ class AssinaturaUseCaseTest {
         InOrder ordem = inOrder(usuarioUseCase, gateway);
         ordem.verify(usuarioUseCase).consultarPorId("user-1");
         ordem.verify(gateway).criarCustom(assinatura);
-        ordem.verify(gateway).criarAssinatura("cust-123");
+        ordem.verify(gateway).criarAssinaturaPlus("cust-123");
         ordem.verify(usuarioUseCase).salvar(usuario);
     }
 
@@ -64,7 +64,7 @@ class AssinaturaUseCaseTest {
     void deveCriarAssinaturaQuandoCustomerExistente() {
         usuario.setIdCustomer("cust-existente");
         when(usuarioUseCase.consultarPorId("user-1")).thenReturn(usuario);
-        when(gateway.criarAssinatura("cust-existente")).thenReturn("sub-xyz");
+        when(gateway.criarAssinaturaPlus("cust-existente")).thenReturn("sub-xyz");
 
         String idRetornado = useCase.criar(assinatura);
 
@@ -73,7 +73,7 @@ class AssinaturaUseCaseTest {
         assertEquals(PlanoUsuario.PLUS, usuario.getPlano());
         assertEquals("sub-xyz", usuario.getIdAssinatura());
         verify(gateway, never()).criarCustom(any());
-        verify(gateway).criarAssinatura("cust-existente");
+        verify(gateway).criarAssinaturaPlus("cust-existente");
         verify(usuarioUseCase).salvar(usuario);
     }
 
@@ -95,7 +95,7 @@ class AssinaturaUseCaseTest {
     void devePropagarExceptionQuandoCriarAssinaturaFalha() {
         usuario.setIdCustomer("cust-ok");
         when(usuarioUseCase.consultarPorId("user-1")).thenReturn(usuario);
-        when(gateway.criarAssinatura("cust-ok"))
+        when(gateway.criarAssinaturaPlus("cust-ok"))
                 .thenThrow(new DataProviderException("Erro ao criar uma assinatura.", null));
 
         DataProviderException ex = assertThrows(

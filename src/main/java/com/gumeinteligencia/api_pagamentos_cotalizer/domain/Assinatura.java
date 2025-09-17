@@ -16,4 +16,5 @@ public class Assinatura {
     private String paymentMethodId;
     private String customerEmail;
     private String idUsuario;
+    private PlanoUsuario plano;
 }

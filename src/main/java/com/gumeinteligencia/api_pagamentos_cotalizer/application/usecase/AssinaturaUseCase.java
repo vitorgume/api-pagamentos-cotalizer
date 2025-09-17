@@ -30,9 +30,11 @@ public class AssinaturaUseCase {
             log.info("Customer criado com sucesso.");
         }
 
-        String idAssinatura = gateway.criarAssinatura(usuario.getIdCustomer());
+        String idAssinatura = usuario.getPlano().equals(PlanoUsuario.PLUS)
+                ? gateway.criarAssinaturaPlus(usuario.getIdCustomer())
+                : gateway.criarAssinaturaEnterprise(usuario.getIdCustomer());
 
-        usuario.setPlano(PlanoUsuario.PLUS);
+        usuario.setPlano(assinatura.getPlano());
         usuario.setIdAssinatura(idAssinatura);
         usuarioUseCase.salvar(usuario);
 
