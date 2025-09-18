@@ -2,9 +2,12 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.PlanoUsuario;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.StatusUsuario;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoCadastro;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
+
+import java.time.LocalDateTime;
 
 @Document(collection = "usuraios")
 @AllArgsConstructor
@@ -26,4 +29,9 @@ public class UsuarioEntity {
     private String idCustomer;
     private PlanoUsuario plano;
     private String idAssinatura;
+    private String urlLogo;
+    private Boolean feedback;
+    private Integer quantidadeOrcamentos;
+    private LocalDateTime dataCriacao;
+    private TipoCadastro tipoCadastro;
 }

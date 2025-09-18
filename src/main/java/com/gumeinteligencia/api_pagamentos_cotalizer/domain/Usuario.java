@@ -2,6 +2,8 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.domain;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -20,4 +22,9 @@ public class Usuario {
     private String idCustomer;
     private PlanoUsuario plano;
     private String idAssinatura;
+    private String urlLogo;
+    private Boolean feedback;
+    private Integer quantidadeOrcamentos;
+    private LocalDateTime dataCriacao;
+    private TipoCadastro tipoCadastro;
 }

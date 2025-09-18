@@ -35,8 +35,10 @@ class AssinaturaUseCaseTest {
     void setup() {
         assinatura = new Assinatura();
         assinatura.setIdUsuario("user-1");
+        assinatura.setPlano(PlanoUsuario.PLUS);
         usuario = new Usuario();
         usuario.setId("user-1");
+        usuario.setPlano(PlanoUsuario.GRATIS);
     }
 
     @Test

@@ -18,6 +18,14 @@ public class UsuarioMapper {
                 .idCustomer(domain.getIdCustomer())
                 .plano(domain.getPlano())
                 .idAssinatura(domain.getIdAssinatura())
+                .quantidadeOrcamentos(domain.getQuantidadeOrcamentos())
+                .dataCriacao(domain.getDataCriacao())
+                .tipoCadastro(domain.getTipoCadastro())
+                .urlLogo(domain.getUrlLogo())
+                .feedback(domain.getFeedback())
+                .quantidadeOrcamentos(domain.getQuantidadeOrcamentos())
+                .dataCriacao(domain.getDataCriacao())
+                .tipoCadastro(domain.getTipoCadastro())
                 .build();
     }
 
@@ -34,6 +42,11 @@ public class UsuarioMapper {
                 .idCustomer(entity.getIdCustomer())
                 .plano(entity.getPlano())
                 .idAssinatura(entity.getIdAssinatura())
+                .urlLogo(entity.getUrlLogo())
+                .feedback(entity.getFeedback())
+                .quantidadeOrcamentos(entity.getQuantidadeOrcamentos())
+                .dataCriacao(entity.getDataCriacao())
+                .tipoCadastro(entity.getTipoCadastro())
                 .build();
     }
 }

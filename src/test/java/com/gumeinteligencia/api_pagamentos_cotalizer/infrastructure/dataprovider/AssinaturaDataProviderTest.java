@@ -104,6 +104,36 @@ class AssinaturaDataProviderTest {
     }
 
     @Test
+    public void deveCriarAssinaturaEnterpriseComSucesso() {
+        String customerId = "cus_abc123";
+
+        WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec bodySpec = mock(WebClient.RequestBodySpec.class);
+        WebClient.RequestHeadersSpec<?> headersSpec = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
+
+        when(webClient.post()).thenReturn(uriSpec);
+        when(uriSpec.uri("/v1/subscriptions")).thenReturn(bodySpec);
+        when(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED)).thenReturn(bodySpec);
+        when(bodySpec.header(eq(HttpHeaders.AUTHORIZATION), anyString())).thenReturn(bodySpec);
+        when(bodySpec.bodyValue(anyString())).thenAnswer(invocation -> headersSpec);
+        when(headersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(Map.class)).thenReturn(Mono.just(Map.of("id", "sub_456")));
+
+        String id = provider.criarAssinaturaEnterprise(customerId);
+
+        assertEquals("sub_456", id);
+    }
+
+    @Test
+    public void deveLancarExcecaoAoCriarAssinaturaEnterprise() {
+        when(webClient.post()).thenThrow(new RuntimeException("Erro"));
+
+        assertThrows(DataProviderException.class, () -> provider.criarAssinaturaEnterprise("cus_erro"));
+    }
+
+    @Test
     public void deveCobrirLambdaOnStatusNaCriacaoDeAssinatura() {
         WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
         WebClient.RequestBodySpec bodySpec = mock(WebClient.RequestBodySpec.class);
@@ -131,6 +161,39 @@ class AssinaturaDataProviderTest {
                 });
         DataProviderException ex = assertThrows(DataProviderException.class, () -> {
             provider.criarAssinaturaPlus("qualquer-customer-id");
+        });
+
+        assertTrue(ex.getMessage().contains("Erro ao criar uma assinatura."));
+    }
+
+    @Test
+    public void deveCobrirLambdaOnStatusNaCriacaoDeAssinaturaEnterprise() {
+        WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec bodySpec = mock(WebClient.RequestBodySpec.class);
+        WebClient.RequestHeadersSpec<?> headersSpec= mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
+        ClientResponse mockClientResponse = mock(ClientResponse.class);
+
+        when(webClient.post()).thenReturn(uriSpec);
+        when(uriSpec.uri("/v1/subscriptions")).thenReturn(bodySpec);
+        when(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED)).thenReturn(bodySpec);
+        when(bodySpec.header(eq(HttpHeaders.AUTHORIZATION), anyString())).thenReturn(bodySpec);
+        when(bodySpec.bodyValue(anyString())).thenAnswer(invocation -> headersSpec);
+        when(headersSpec.retrieve()).thenReturn(responseSpec);
+
+        when(mockClientResponse.bodyToMono(String.class))
+                .thenReturn(Mono.just("ERRO_DE_TESTE_STRIPE"));
+
+        when(responseSpec.onStatus(any(), any()))
+                .thenAnswer(invocation -> {
+                    @SuppressWarnings("unchecked")
+                    Function<ClientResponse, Mono<? extends Throwable>> errorFunction =
+                            invocation.getArgument(1);
+                    Mono<? extends Throwable> monoErr = errorFunction.apply(mockClientResponse);
+                    throw monoErr.block();
+                });
+        DataProviderException ex = assertThrows(DataProviderException.class, () -> {
+            provider.criarAssinaturaEnterprise("qualquer-customer-id");
         });
 
         assertTrue(ex.getMessage().contains("Erro ao criar uma assinatura."));
