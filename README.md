@@ -1,10 +1,5 @@
 # Cotalizer — API de pagamentos
 
----
-
-> Backend REST do Cotalizer: geração/gestão de orçamentos (com e sem IA), PDFs em S3, autenticação e gestão de usuários.
->
-
 ## Visão Geral
 
 API responsável pela lógica e integração de pagamentos da API principal
@@ -41,7 +36,7 @@ API responsável pela lógica e integração de pagamentos da API principal
 > Dica visual rápida:
 > 
 
-![arquitetura](docs/arquitetura.png)
+![arquitetura](docs/arquitetura.jpg)
 
 ---
 
