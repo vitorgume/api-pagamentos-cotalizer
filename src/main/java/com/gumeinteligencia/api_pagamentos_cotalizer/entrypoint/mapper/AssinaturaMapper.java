@@ -10,7 +10,7 @@ public class AssinaturaMapper {
                 .paymentMethodId(dto.getPaymentMethodId())
                 .customerEmail(dto.getCustomerEmail())
                 .idUsuario(dto.getIdUsuario())
-                .plano(dto.getPlano())
+                .idPlano(dto.getPlano())
                 .build();
     }
 }

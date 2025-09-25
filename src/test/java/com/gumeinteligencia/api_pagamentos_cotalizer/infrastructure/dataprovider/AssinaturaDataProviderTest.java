@@ -74,7 +74,7 @@ class AssinaturaDataProviderTest {
     }
 
     @Test
-    public void deveCriarAssinaturaPlusComSucesso() {
+    public void deveCriarAssinaturaComSucesso() {
         String customerId = "cus_abc123";
 
         WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
@@ -91,16 +91,16 @@ class AssinaturaDataProviderTest {
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(Map.class)).thenReturn(Mono.just(Map.of("id", "sub_456")));
 
-        String id = provider.criarAssinaturaPlus(customerId);
+        String id = provider.criarAssinatura(customerId);
 
         assertEquals("sub_456", id);
     }
 
     @Test
-    public void deveLancarExcecaoAoCriarAssinaturaPlus() {
+    public void deveLancarExcecaoAoCriarAssinatura() {
         when(webClient.post()).thenThrow(new RuntimeException("Erro"));
 
-        assertThrows(DataProviderException.class, () -> provider.criarAssinaturaPlus("cus_erro"));
+        assertThrows(DataProviderException.class, () -> provider.criarAssinatura("cus_erro"));
     }
 
     @Test
@@ -160,7 +160,7 @@ class AssinaturaDataProviderTest {
                     throw monoErr.block();
                 });
         DataProviderException ex = assertThrows(DataProviderException.class, () -> {
-            provider.criarAssinaturaPlus("qualquer-customer-id");
+            provider.criarAssinatura("qualquer-customer-id");
         });
 
         assertTrue(ex.getMessage().contains("Erro ao criar uma assinatura."));

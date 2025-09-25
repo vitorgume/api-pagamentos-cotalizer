@@ -2,7 +2,7 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase;
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.AssinaturaGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
-import com.gumeinteligencia.api_pagamentos_cotalizer.domain.PlanoUsuario;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ public class AssinaturaUseCase {
 
     private final AssinaturaGateway gateway;
     private final UsuarioUseCase usuarioUseCase;
+    private final PlanoUseCase planoUseCase;
 
     public String criar(Assinatura assinatura) {
         log.info("Criando assinatura para o usuario. Assinatura: {}", assinatura);
@@ -30,11 +31,11 @@ public class AssinaturaUseCase {
             log.info("Customer criado com sucesso.");
         }
 
-        String idAssinatura = assinatura.getPlano().equals(PlanoUsuario.PLUS)
-                ? gateway.criarAssinaturaPlus(usuario.getIdCustomer())
-                : gateway.criarAssinaturaEnterprise(usuario.getIdCustomer());
+        Plano planoUsuario = planoUseCase.consultarPorId(assinatura.getIdPlano());
 
-        usuario.setPlano(assinatura.getPlano());
+        String idAssinatura = gateway.criarAssinatura(usuario.getIdCustomer(), planoUsuario.getIdPlanoStripe());
+
+        usuario.setPlano(planoUsuario);
         usuario.setIdAssinatura(idAssinatura);
         usuarioUseCase.salvar(usuario);
 
@@ -50,7 +51,9 @@ public class AssinaturaUseCase {
 
         gateway.cancelar(usuario.getIdAssinatura());
 
-        usuario.setPlano(PlanoUsuario.GRATIS);
+        Plano planoUsuario = planoUseCase.consultarPlanoPadrao();
+
+        usuario.setPlano(planoUsuario);
         usuario.setIdAssinatura(null);
         usuarioUseCase.salvar(usuario);
 
