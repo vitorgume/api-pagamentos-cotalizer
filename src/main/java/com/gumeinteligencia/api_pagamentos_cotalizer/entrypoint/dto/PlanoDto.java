@@ -1,6 +1,9 @@
-package com.gumeinteligencia.api_pagamentos_cotalizer.domain;
+package com.gumeinteligencia.api_pagamentos_cotalizer.entrypoint.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,8 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@ToString
-public class Plano {
+public class PlanoDto {
     private String id;
     private String titulo;
     private BigDecimal valor;
