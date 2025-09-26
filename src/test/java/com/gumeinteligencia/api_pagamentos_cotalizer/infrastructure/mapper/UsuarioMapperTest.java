@@ -1,16 +1,15 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.mapper;
 
-import com.gumeinteligencia.api_pagamentos_cotalizer.domain.PlanoUsuario;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.StatusUsuario;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
+import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity.PlanoEntity;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity.UsuarioEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioMapperTest {
 
@@ -29,7 +28,7 @@ class UsuarioMapperTest {
                 .senha("senha123")
                 .status(StatusUsuario.ATIVO)
                 .idCustomer(UUID.randomUUID().toString())
-                .plano(PlanoUsuario.PLUS)
+                .plano(Plano.builder().id("idteste123").build())
                 .idAssinatura(UUID.randomUUID().toString())
                 .build();
 
@@ -43,7 +42,7 @@ class UsuarioMapperTest {
                 .senha("senha312")
                 .status(StatusUsuario.INATIVO)
                 .idCustomer(UUID.randomUUID().toString())
-                .plano(PlanoUsuario.GRATIS)
+                .plano(PlanoEntity.builder().id("idteste123").build())
                 .idAssinatura(UUID.randomUUID().toString())
                 .build();
     }
@@ -61,7 +60,7 @@ class UsuarioMapperTest {
         Assertions.assertEquals(resultado.getSenha(), usuarioDomain.getSenha());
         Assertions.assertEquals(resultado.getStatus(), usuarioDomain.getStatus());
         Assertions.assertEquals(resultado.getIdCustomer(), usuarioDomain.getIdCustomer());
-        Assertions.assertEquals(resultado.getPlano(), usuarioDomain.getPlano());
+        Assertions.assertEquals(resultado.getPlano().getId(), usuarioDomain.getPlano().getId());
         Assertions.assertEquals(resultado.getIdAssinatura(), usuarioDomain.getIdAssinatura());
     }
 
@@ -79,7 +78,7 @@ class UsuarioMapperTest {
         Assertions.assertEquals(resultado.getSenha(), usuarioEntity.getSenha());
         Assertions.assertEquals(resultado.getStatus(), usuarioEntity.getStatus());
         Assertions.assertEquals(resultado.getIdCustomer(), usuarioEntity.getIdCustomer());
-        Assertions.assertEquals(resultado.getPlano(), usuarioEntity.getPlano());
+        Assertions.assertEquals(resultado.getPlano().getId(), usuarioEntity.getPlano().getId());
         Assertions.assertEquals(resultado.getIdAssinatura(), usuarioEntity.getIdAssinatura());
     }
 }

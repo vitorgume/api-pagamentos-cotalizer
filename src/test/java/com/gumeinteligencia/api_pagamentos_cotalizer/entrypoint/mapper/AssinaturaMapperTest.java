@@ -1,7 +1,9 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.entrypoint.mapper;
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
 import com.gumeinteligencia.api_pagamentos_cotalizer.entrypoint.dto.AssinaturaDto;
+import com.gumeinteligencia.api_pagamentos_cotalizer.entrypoint.dto.PlanoDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ class AssinaturaMapperTest {
                 .paymentMethodId("method-test")
                 .customerEmail("emailteste@gmail.com")
                 .idUsuario(UUID.randomUUID().toString())
+                .plano(PlanoDto.builder().id("teste123").build())
                 .build();
     }
 

@@ -2,6 +2,8 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.dataprovide
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.exceptions.DataProviderException;
+import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity.PlanoEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,8 +36,12 @@ class AssinaturaDataProviderTest {
     @InjectMocks
     private AssinaturaDataProvider provider;
 
-    private final String SECRET_KEY = "sk_test_123";
-    private final String ASSINATURA_ID = "price_abc123";
+    private PlanoEntity planoEntity;
+
+    @BeforeEach
+    void setUp() {
+        planoEntity = PlanoEntity.builder().id("idteste").build();
+    }
 
     @Test
     public void deveCriarCustomerComSucesso() {
@@ -91,7 +97,7 @@ class AssinaturaDataProviderTest {
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(Map.class)).thenReturn(Mono.just(Map.of("id", "sub_456")));
 
-        String id = provider.criarAssinatura(customerId);
+        String id = provider.criarAssinatura(customerId, planoEntity.getId());
 
         assertEquals("sub_456", id);
     }
@@ -100,37 +106,7 @@ class AssinaturaDataProviderTest {
     public void deveLancarExcecaoAoCriarAssinatura() {
         when(webClient.post()).thenThrow(new RuntimeException("Erro"));
 
-        assertThrows(DataProviderException.class, () -> provider.criarAssinatura("cus_erro"));
-    }
-
-    @Test
-    public void deveCriarAssinaturaEnterpriseComSucesso() {
-        String customerId = "cus_abc123";
-
-        WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
-        WebClient.RequestBodySpec bodySpec = mock(WebClient.RequestBodySpec.class);
-        WebClient.RequestHeadersSpec<?> headersSpec = mock(WebClient.RequestHeadersSpec.class);
-        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
-
-        when(webClient.post()).thenReturn(uriSpec);
-        when(uriSpec.uri("/v1/subscriptions")).thenReturn(bodySpec);
-        when(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED)).thenReturn(bodySpec);
-        when(bodySpec.header(eq(HttpHeaders.AUTHORIZATION), anyString())).thenReturn(bodySpec);
-        when(bodySpec.bodyValue(anyString())).thenAnswer(invocation -> headersSpec);
-        when(headersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(Map.class)).thenReturn(Mono.just(Map.of("id", "sub_456")));
-
-        String id = provider.criarAssinaturaEnterprise(customerId);
-
-        assertEquals("sub_456", id);
-    }
-
-    @Test
-    public void deveLancarExcecaoAoCriarAssinaturaEnterprise() {
-        when(webClient.post()).thenThrow(new RuntimeException("Erro"));
-
-        assertThrows(DataProviderException.class, () -> provider.criarAssinaturaEnterprise("cus_erro"));
+        assertThrows(DataProviderException.class, () -> provider.criarAssinatura("cus_erro", planoEntity.getId()));
     }
 
     @Test
@@ -160,47 +136,11 @@ class AssinaturaDataProviderTest {
                     throw monoErr.block();
                 });
         DataProviderException ex = assertThrows(DataProviderException.class, () -> {
-            provider.criarAssinatura("qualquer-customer-id");
+            provider.criarAssinatura("qualquer-customer-id", planoEntity.getId());
         });
 
         assertTrue(ex.getMessage().contains("Erro ao criar uma assinatura."));
     }
-
-    @Test
-    public void deveCobrirLambdaOnStatusNaCriacaoDeAssinaturaEnterprise() {
-        WebClient.RequestBodyUriSpec uriSpec = mock(WebClient.RequestBodyUriSpec.class);
-        WebClient.RequestBodySpec bodySpec = mock(WebClient.RequestBodySpec.class);
-        WebClient.RequestHeadersSpec<?> headersSpec= mock(WebClient.RequestHeadersSpec.class);
-        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
-        ClientResponse mockClientResponse = mock(ClientResponse.class);
-
-        when(webClient.post()).thenReturn(uriSpec);
-        when(uriSpec.uri("/v1/subscriptions")).thenReturn(bodySpec);
-        when(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED)).thenReturn(bodySpec);
-        when(bodySpec.header(eq(HttpHeaders.AUTHORIZATION), anyString())).thenReturn(bodySpec);
-        when(bodySpec.bodyValue(anyString())).thenAnswer(invocation -> headersSpec);
-        when(headersSpec.retrieve()).thenReturn(responseSpec);
-
-        when(mockClientResponse.bodyToMono(String.class))
-                .thenReturn(Mono.just("ERRO_DE_TESTE_STRIPE"));
-
-        when(responseSpec.onStatus(any(), any()))
-                .thenAnswer(invocation -> {
-                    @SuppressWarnings("unchecked")
-                    Function<ClientResponse, Mono<? extends Throwable>> errorFunction =
-                            invocation.getArgument(1);
-                    Mono<? extends Throwable> monoErr = errorFunction.apply(mockClientResponse);
-                    throw monoErr.block();
-                });
-        DataProviderException ex = assertThrows(DataProviderException.class, () -> {
-            provider.criarAssinaturaEnterprise("qualquer-customer-id");
-        });
-
-        assertTrue(ex.getMessage().contains("Erro ao criar uma assinatura."));
-    }
-
-
-
 
     @Test
     public void deveCancelarAssinaturaComSucesso() {
