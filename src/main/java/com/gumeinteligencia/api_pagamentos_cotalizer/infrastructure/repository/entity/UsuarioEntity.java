@@ -33,4 +33,5 @@ public class UsuarioEntity {
     private Integer quantidadeOrcamentos;
     private LocalDateTime dataCriacao;
     private TipoCadastro tipoCadastro;
+    private Boolean onboarding;
 }
