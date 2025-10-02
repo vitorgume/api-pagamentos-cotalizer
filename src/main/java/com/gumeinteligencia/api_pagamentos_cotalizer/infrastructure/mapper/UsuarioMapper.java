@@ -16,7 +16,7 @@ public class UsuarioMapper {
                 .senha(domain.getSenha())
                 .status(domain.getStatus())
                 .idCustomer(domain.getIdCustomer())
-                .plano(domain.getPlano())
+                .plano(PlanoMapper.paraEntity(domain.getPlano()))
                 .idAssinatura(domain.getIdAssinatura())
                 .quantidadeOrcamentos(domain.getQuantidadeOrcamentos())
                 .dataCriacao(domain.getDataCriacao())
@@ -26,6 +26,7 @@ public class UsuarioMapper {
                 .quantidadeOrcamentos(domain.getQuantidadeOrcamentos())
                 .dataCriacao(domain.getDataCriacao())
                 .tipoCadastro(domain.getTipoCadastro())
+                .onboarding(domain.getOnboarding())
                 .build();
     }
 
@@ -40,13 +41,14 @@ public class UsuarioMapper {
                 .senha(entity.getSenha())
                 .status(entity.getStatus())
                 .idCustomer(entity.getIdCustomer())
-                .plano(entity.getPlano())
+                .plano(PlanoMapper.paraDomain(entity.getPlano()))
                 .idAssinatura(entity.getIdAssinatura())
                 .urlLogo(entity.getUrlLogo())
                 .feedback(entity.getFeedback())
                 .quantidadeOrcamentos(entity.getQuantidadeOrcamentos())
                 .dataCriacao(entity.getDataCriacao())
                 .tipoCadastro(entity.getTipoCadastro())
+                .onboarding(entity.getOnboarding())
                 .build();
     }
 }

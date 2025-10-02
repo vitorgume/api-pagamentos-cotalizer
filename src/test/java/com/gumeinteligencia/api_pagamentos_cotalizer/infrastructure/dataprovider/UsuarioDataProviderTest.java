@@ -1,9 +1,11 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.dataprovider;
 
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Usuario;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.exceptions.DataProviderException;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.mapper.UsuarioMapper;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.UsuarioRepository;
+import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity.PlanoEntity;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity.UsuarioEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,7 @@ class UsuarioDataProviderTest {
         String id = "usuario-123";
         UsuarioEntity usuarioEntity = new UsuarioEntity();
         usuarioEntity.setId(id);
+        usuarioEntity.setPlano(PlanoEntity.builder().id("teste123").build());
 
         when(repository.findById(id)).thenReturn(Optional.of(usuarioEntity));
 
@@ -58,6 +61,7 @@ class UsuarioDataProviderTest {
     public void deveSalvarUsuarioComSucesso() {
         Usuario usuario = new Usuario();
         usuario.setId("usuario-abc");
+        usuario.setPlano(Plano.builder().id("teste123").build());
 
         UsuarioEntity entity = UsuarioMapper.paraEntity(usuario);
 
@@ -72,6 +76,7 @@ class UsuarioDataProviderTest {
     public void deveLancarExcecaoAoSalvarUsuario() {
         Usuario usuario = new Usuario();
         usuario.setId("usuario-exception");
+        usuario.setPlano(Plano.builder().id("teste123").build());
 
         when(repository.save(any())).thenThrow(new RuntimeException("Erro ao salvar"));
 

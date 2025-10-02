@@ -5,9 +5,7 @@ import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Assinatura;
 public interface AssinaturaGateway {
     String criarCustom(Assinatura assinatura);
 
-    String criarAssinaturaPlus(String customId);
-
-    String criarAssinaturaEnterprise(String customId);
+    String criarAssinatura(String customId, String idPlano);
 
     void cancelar(String idAssinatura);
 }

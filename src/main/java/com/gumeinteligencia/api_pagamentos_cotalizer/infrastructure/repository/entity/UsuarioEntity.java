@@ -1,6 +1,5 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity;
 
-import com.gumeinteligencia.api_pagamentos_cotalizer.domain.PlanoUsuario;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.StatusUsuario;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoCadastro;
 import lombok.*;
@@ -27,11 +26,12 @@ public class UsuarioEntity {
     private String senha;
     private StatusUsuario status;
     private String idCustomer;
-    private PlanoUsuario plano;
+    private PlanoEntity plano;
     private String idAssinatura;
     private String urlLogo;
     private Boolean feedback;
     private Integer quantidadeOrcamentos;
     private LocalDateTime dataCriacao;
     private TipoCadastro tipoCadastro;
+    private Boolean onboarding;
 }

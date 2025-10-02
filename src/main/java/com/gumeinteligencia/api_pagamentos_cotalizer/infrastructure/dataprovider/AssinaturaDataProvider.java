@@ -22,26 +22,16 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
     @Value("${stripe.secret.key}")
     private final String SECRET_KEY;
 
-    @Value("${stripe.assinatura.id.plus}")
-    private final String ASSINATURA_ID_PLUS;
-
-    @Value("${stripe.assinatura.id.enterprise}")
-    private final String ASSINATURA_ID_ENTERPRISE;
-
     private final String MENSAGEM_ERRO_CRIAR_CUSTOMER = "Erro ao criar customer.";
     private final String MENSAGEM_ERRO_CRIAR_ASSINATURA = "Erro ao criar uma assinatura.";
     private final String MENSAGEM_ERRO_CANCELAR_ASSINATURA = "Erro ao cancelar assinatura.";
 
     public AssinaturaDataProvider(
             WebClient webClient,
-            @Value("${stripe.secret.key}") String SECRET_KEY,
-            @Value("${stripe.assinatura.id.plus}") String ASSINATURA_ID_PLUS,
-            @Value("${stripe.assinatura.id.enterprise}") String ASSINATURA_ID_ENTERPRISE
+            @Value("${stripe.secret.key}") String SECRET_KEY
     ) {
         this.webClient = webClient;
         this.SECRET_KEY = SECRET_KEY;
-        this.ASSINATURA_ID_PLUS = ASSINATURA_ID_PLUS;
-        this.ASSINATURA_ID_ENTERPRISE = ASSINATURA_ID_ENTERPRISE;
     }
 
     @Override
@@ -66,7 +56,7 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
     }
 
     @Override
-    public String criarAssinaturaPlus(String customerId) {
+    public String criarAssinatura(String customerId, String idPlano) {
         Map responseRequest;
 
         try {
@@ -74,34 +64,7 @@ public class AssinaturaDataProvider implements AssinaturaGateway {
                     .uri("/v1/subscriptions")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + SECRET_KEY)
-                    .bodyValue("customer=" + customerId + "&items[0][price]=" + ASSINATURA_ID_PLUS)
-                    .retrieve()
-                    .onStatus(status -> status.isError(), response ->
-                            response.bodyToMono(String.class).flatMap(body -> {
-                                log.error("Erro HTTP Stripe: {}", body);
-                                return Mono.error(new RuntimeException("Erro HTTP Stripe: " + body));
-                            })
-                    )
-                    .bodyToMono(Map.class)
-                    .block();
-        } catch (Exception ex) {
-            log.error(MENSAGEM_ERRO_CRIAR_ASSINATURA, ex);
-            throw new DataProviderException(MENSAGEM_ERRO_CRIAR_ASSINATURA, ex.getCause());
-        }
-
-        return responseRequest.get("id").toString();
-    }
-
-    @Override
-    public String criarAssinaturaEnterprise(String customerId) {
-        Map responseRequest;
-
-        try {
-            responseRequest = webClient.post()
-                    .uri("/v1/subscriptions")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + SECRET_KEY)
-                    .bodyValue("customer=" + customerId + "&items[0][price]=" + ASSINATURA_ID_ENTERPRISE)
+                    .bodyValue("customer=" + customerId + "&items[0][price]=" + idPlano)
                     .retrieve()
                     .onStatus(status -> status.isError(), response ->
                             response.bodyToMono(String.class).flatMap(body -> {

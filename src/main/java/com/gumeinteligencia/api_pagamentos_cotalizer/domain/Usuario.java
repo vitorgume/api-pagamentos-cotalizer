@@ -20,11 +20,12 @@ public class Usuario {
     private String senha;
     private StatusUsuario status;
     private String idCustomer;
-    private PlanoUsuario plano;
+    private Plano plano;
     private String idAssinatura;
     private String urlLogo;
     private Boolean feedback;
     private Integer quantidadeOrcamentos;
     private LocalDateTime dataCriacao;
     private TipoCadastro tipoCadastro;
+    private Boolean onboarding;
 }
