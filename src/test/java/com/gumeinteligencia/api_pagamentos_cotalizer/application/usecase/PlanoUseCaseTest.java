@@ -3,6 +3,8 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.application.usecase;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.exceptions.PlanoNaoEncontradoException;
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.PlanoGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoCadastro;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoPlano;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,7 +72,7 @@ class PlanoUseCaseTest {
     void consultarPlanoPadrao_deveRetornarPlano_quandoEncontrado() {
         // arrange
         Plano plano = mock(Plano.class);
-        when(gateway.consultarPlanoPeloTipo()).thenReturn(Optional.of(plano));
+        when(gateway.consultarPlanoPeloTipo(TipoPlano.PADRAO)).thenReturn(Optional.of(plano));
 
         // act
         Plano out = useCase.consultarPlanoPadrao();
@@ -78,18 +80,18 @@ class PlanoUseCaseTest {
         // assert
         assertNotNull(out);
         assertSame(plano, out);
-        verify(gateway, times(1)).consultarPlanoPeloTipo();
+        verify(gateway, times(1)).consultarPlanoPeloTipo(TipoPlano.PADRAO);
         verifyNoMoreInteractions(gateway);
     }
 
     @Test
     void consultarPlanoPadrao_deveLancarPlanoNaoEncontrado_quandoVazio() {
         // arrange
-        when(gateway.consultarPlanoPeloTipo()).thenReturn(Optional.empty());
+        when(gateway.consultarPlanoPeloTipo(TipoPlano.PADRAO)).thenReturn(Optional.empty());
 
         // act + assert
         assertThrows(PlanoNaoEncontradoException.class, () -> useCase.consultarPlanoPadrao());
-        verify(gateway, times(1)).consultarPlanoPeloTipo();
+        verify(gateway, times(1)).consultarPlanoPeloTipo(TipoPlano.PADRAO);
         verifyNoMoreInteractions(gateway);
     }
 
@@ -97,12 +99,12 @@ class PlanoUseCaseTest {
     void consultarPlanoPadrao_devePropagarExcecao_quandoGatewayFalha() {
         // arrange
         RuntimeException infra = new RuntimeException("erro");
-        when(gateway.consultarPlanoPeloTipo()).thenThrow(infra);
+        when(gateway.consultarPlanoPeloTipo(TipoPlano.PADRAO)).thenThrow(infra);
 
         // act + assert
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> useCase.consultarPlanoPadrao());
         assertSame(infra, thrown);
-        verify(gateway, times(1)).consultarPlanoPeloTipo();
+        verify(gateway, times(1)).consultarPlanoPeloTipo(TipoPlano.PADRAO);
         verifyNoMoreInteractions(gateway);
     }
 

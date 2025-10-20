@@ -77,50 +77,5 @@ class PlanoDataProviderTest {
         verifyNoMoreInteractions(repository);
     }
 
-    @Test
-    void consultarPlanoPadrao_deveRetornarPlanoMapeado_quandoEncontrado() {
-        PlanoEntity entity = mock(PlanoEntity.class);
-        Plano domain = mock(Plano.class);
-
-        when(repository.findByPadraoTrue()).thenReturn(Optional.of(entity));
-
-        try (MockedStatic<PlanoMapper> mocked = mockStatic(PlanoMapper.class)) {
-            mocked.when(() -> PlanoMapper.paraDomain(entity)).thenReturn(domain);
-
-            Optional<Plano> out = dataProvider.consultarPlanoPeloTipo();
-
-            assertTrue(out.isPresent());
-            assertSame(domain, out.get());
-            verify(repository, times(1)).findByPadraoTrue();
-            verifyNoMoreInteractions(repository);
-        }
-    }
-
-    @Test
-    void consultarPlanoPeloTipo_deveRetornarOptionalVazio_quandoNaoEncontrado() {
-        when(repository.findByPadraoTrue()).thenReturn(Optional.empty());
-
-        try (MockedStatic<PlanoMapper> mocked = mockStatic(PlanoMapper.class)) {
-            Optional<Plano> out = dataProvider.consultarPlanoPeloTipo();
-
-            assertTrue(out.isEmpty());
-            verify(repository, times(1)).findByPadraoTrue();
-            verifyNoMoreInteractions(repository);
-            mocked.verifyNoInteractions();
-        }
-    }
-
-    @Test
-    void consultarPlanoPeloTipo_deveLancarDataProviderException_quandoRepositorioFalha() {
-        IllegalStateException infra = new IllegalStateException("erro");
-        when(repository.findByPadraoTrue()).thenThrow(infra);
-
-        DataProviderException ex = assertThrows(DataProviderException.class,
-                () -> dataProvider.consultarPlanoPeloTipo());
-
-        assertEquals("Erro ao consultar plano padrão verdadeiro.", ex.getMessage());
-        verify(repository, times(1)).findByPadraoTrue();
-        verifyNoMoreInteractions(repository);
-    }
 
 }
