@@ -12,7 +12,7 @@ public class PlanoMapper {
                 .valor(entity.getValor())
                 .limite(entity.getLimite())
                 .idPlanoStripe(entity.getIdPlanoStripe())
-                .padrao(entity.getPadrao())
+                .tipoPlano(entity.getTipoPlano())
                 .sequencia(entity.getSequencia())
                 .servicos(entity.getServicos())
                 .build();
@@ -25,7 +25,7 @@ public class PlanoMapper {
                 .valor(domain.getValor())
                 .limite(domain.getLimite())
                 .idPlanoStripe(domain.getIdPlanoStripe())
-                .padrao(domain.getPadrao())
+                .tipoPlano(domain.getTipoPlano())
                 .sequencia(domain.getSequencia())
                 .servicos(domain.getServicos())
                 .build();

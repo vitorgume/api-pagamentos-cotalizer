@@ -2,6 +2,7 @@ package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.dataprovide
 
 import com.gumeinteligencia.api_pagamentos_cotalizer.application.gateways.PlanoGateway;
 import com.gumeinteligencia.api_pagamentos_cotalizer.domain.Plano;
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoPlano;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.exceptions.DataProviderException;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.mapper.PlanoMapper;
 import com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.PlanoRepository;
@@ -36,11 +37,11 @@ public class PlanoDataProvider implements PlanoGateway {
     }
 
     @Override
-    public Optional<Plano> consultarPlanoPadrao() {
+    public Optional<Plano> consultarPlanoPeloTipo(TipoPlano tipoPlano) {
         Optional<PlanoEntity> planoEntity;
 
         try {
-            planoEntity = repository.findByPadraoTrue();
+            planoEntity = repository.findByTipoPlano(tipoPlano);
         } catch (Exception ex) {
             log.error(MENSAGEM_ERRO_CONSULTAR_PLANO_PADRAO, ex);
             throw new DataProviderException(MENSAGEM_ERRO_CONSULTAR_PLANO_PADRAO, ex.getCause());
