@@ -16,7 +16,7 @@ public class Plano {
     private BigDecimal valor;
     private Integer limite;
     private String idPlanoStripe;
-    private Boolean padrao;
+    private TipoPlano tipoPlano;
     private Integer sequencia;
     private List<String> servicos;
 }

@@ -1,5 +1,6 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.infrastructure.repository.entity;
 
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoPlano;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -22,7 +23,7 @@ public class PlanoEntity {
     private BigDecimal valor;
     private Integer limite;
     private String idPlanoStripe;
-    private Boolean padrao;
+    private TipoPlano tipoPlano;
     private Integer sequencia;
     private List<String> servicos;
 

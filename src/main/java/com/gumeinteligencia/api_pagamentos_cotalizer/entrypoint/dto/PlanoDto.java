@@ -1,5 +1,6 @@
 package com.gumeinteligencia.api_pagamentos_cotalizer.entrypoint.dto;
 
+import com.gumeinteligencia.api_pagamentos_cotalizer.domain.TipoPlano;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class PlanoDto {
     private BigDecimal valor;
     private Integer limite;
     private String idPlanoStripe;
-    private Boolean padrao;
+    private TipoPlano tipoPlano;
     private Integer sequencia;
     private List<String> servicos;
 }

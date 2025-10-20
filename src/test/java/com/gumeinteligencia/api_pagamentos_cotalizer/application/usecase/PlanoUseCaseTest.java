@@ -70,7 +70,7 @@ class PlanoUseCaseTest {
     void consultarPlanoPadrao_deveRetornarPlano_quandoEncontrado() {
         // arrange
         Plano plano = mock(Plano.class);
-        when(gateway.consultarPlanoPadrao()).thenReturn(Optional.of(plano));
+        when(gateway.consultarPlanoPeloTipo()).thenReturn(Optional.of(plano));
 
         // act
         Plano out = useCase.consultarPlanoPadrao();
@@ -78,18 +78,18 @@ class PlanoUseCaseTest {
         // assert
         assertNotNull(out);
         assertSame(plano, out);
-        verify(gateway, times(1)).consultarPlanoPadrao();
+        verify(gateway, times(1)).consultarPlanoPeloTipo();
         verifyNoMoreInteractions(gateway);
     }
 
     @Test
     void consultarPlanoPadrao_deveLancarPlanoNaoEncontrado_quandoVazio() {
         // arrange
-        when(gateway.consultarPlanoPadrao()).thenReturn(Optional.empty());
+        when(gateway.consultarPlanoPeloTipo()).thenReturn(Optional.empty());
 
         // act + assert
         assertThrows(PlanoNaoEncontradoException.class, () -> useCase.consultarPlanoPadrao());
-        verify(gateway, times(1)).consultarPlanoPadrao();
+        verify(gateway, times(1)).consultarPlanoPeloTipo();
         verifyNoMoreInteractions(gateway);
     }
 
@@ -97,12 +97,12 @@ class PlanoUseCaseTest {
     void consultarPlanoPadrao_devePropagarExcecao_quandoGatewayFalha() {
         // arrange
         RuntimeException infra = new RuntimeException("erro");
-        when(gateway.consultarPlanoPadrao()).thenThrow(infra);
+        when(gateway.consultarPlanoPeloTipo()).thenThrow(infra);
 
         // act + assert
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> useCase.consultarPlanoPadrao());
         assertSame(infra, thrown);
-        verify(gateway, times(1)).consultarPlanoPadrao();
+        verify(gateway, times(1)).consultarPlanoPeloTipo();
         verifyNoMoreInteractions(gateway);
     }
 
